@@ -24,7 +24,6 @@ We begin with the `font-family` property, where we assign a name to the font to 
     src: url(./fonts/Amstelvar-Roman-VF.ttf) format('truetype');
     font-display: swap;
 }
-
 @font-face {
     font-family: Amstelvar; 
     font-weight: 100 900;
@@ -33,7 +32,6 @@ We begin with the `font-family` property, where we assign a name to the font to 
     src: url(./fonts/Amstelvar-Italic-VF.ttf);
     font-display: swap;
 }
-
 body {
     font-family: Amstelvar;
 }
@@ -70,7 +68,6 @@ Even though the support for variable fonts is pretty good in all modern browsers
 h1 {
     font-family: some-static-font-family;
 }
-
 @supports (font-variation-settings: 'wdth' 115) {
     h1 {
         font-family: some-variable-font-family;
@@ -88,7 +85,6 @@ So, using this approach, we first create CSS variable and it's value is the name
 :root {
     --font-family: Amstelvar;
 }
-
 body {
     font-family: Arial, Helvetica, sans-serif;
     font-family: var(--font-family);
