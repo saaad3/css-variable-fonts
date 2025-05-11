@@ -2,7 +2,7 @@
 @font-face {
     font-family: Amstelvar; 
     font-weight: 100 900;
-    font-style: normal;
+    font-style: normal; 
     font-stretch: 25% 140%;
     src: url(./fonts/Amstelvar-Roman-VF.ttf) format('truetype');
     font-display: swap;
@@ -27,11 +27,12 @@ body {
     margin: 1rem auto;
     padding: 2rem;
     font-family: Arial, Helvetica, sans-serif;
+    /* Fallback font */
     font-family: var(--font-family);
     font-variation-settings: 'wght' var(--amst-font-weight), 'wdth' var(--amst-font-width), 'opsz' var(--amst-optical-size);
     font-size: 100%;
     font-size: 1.25rem;
-    display: grid;
+    display: grid; 
     grid-template-columns: 1fr 3fr;
     font-optical-sizing: auto;
 }
@@ -48,7 +49,7 @@ body {
     padding-left: 8.9rem;
 }
 
-.masthead__title {
+.masthead_title {
     margin: .5rem 0 -1rem;
     font-size: 14rem;
     line-height: 90%;
