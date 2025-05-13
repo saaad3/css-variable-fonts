@@ -12,7 +12,6 @@
 
 - **OpenType**: A modern font format that stores fonts with advanced features, like different styles or weights in one file. Variable fonts are mostly available in OpenType format with .otf extension.
 
-
 ## Variable Fonts: Introduction
 
 CSS variable fonts make it easy to create different design variations (weight and style) of a typeface from a single file using CSS.
@@ -21,23 +20,23 @@ With static fonts, each font/variation (weight, style, etc.) is provided in a se
 
 **With variable fonts, different variations of a typeface are incorporated into a single file rather than having a separate font file for every width, weight, or style and use CSS to vary the appearance of a typeface to achieve the desired output.**
 
-**Note:** Some variable fonts _(almost all google fonts)_ come in two files: one for roman (regular) with all its variations, and one for italic variations. This is sometimes done to reduce the overall file size in cases where the italics aren't needed.
-
+**Note:** Some variable fonts _(almost all google fonts)_ come in two files: one for roman (upright / regular) with all its variations, and one for italic variations. This is sometimes done to reduce the overall file size in cases where the italics aren't needed.
 
 ## Variation Axis
 
-Variable fonts have **variation axes**, each of which is a numeric range describing a specific aspect of the typeface design. For example, the “weight” axis controls how light or how bold the letterforms can be, and the “width” axis controls how narrow or how wide they can be. An axis can be a range or a binary value. Weight might range from 1–1000, whereas italic might be 0 or 1 (off or on).
+Variable fonts have **variation axes**, each of which is a numeric range describing a specific aspect of the typeface design. For example, the “weight” axis controls how light or how bold the letterforms can be, and the “width” axis controls how narrow or how wide they can be. A Variable font may have single variation axis or any number of, it entirely depends on typeface designer. An axis can be a range or a binary value. Weight might range from 1–1000, whereas italic might be 0 or 1 (off or on).
 
 There are five registered variation axes in the OpenType specification which are frequent and common enough that authors of specification felt they are worth standardizing.
 
 The five registered variation axis are:
+
 1. Weight
 2. Width
 3. Italic
 4. Slant
 5. Optical Size
 
-Additionally, typeface designers may provide custom variation axes to customise other aspects of the font, such as x-height/
+Additionally, typeface designers may provide custom variation axes to customise other aspects of the font.
 
 **The variation axis are identifed by 4 letter words tag. The standard variation axis are identified by lowercase letters and custom are with uppercase letters.**
 
@@ -46,10 +45,9 @@ To see what axis a variable font has and what the value ranges are for each axis
 1. See the documentation of variable font.
 2. The most suitable and practical way is to check the font editor in firefox developer tools which shows all standard and custom variation axis along with the range that can be used. It is really great tool to play with different variation axis.
 
-
 ## CSS properties for Registered axes
 
-The W3C has undertaken to map Registered variation axis to standard CSS properties, so we use them to set different variation axes. This can be really useful if we want to serve a fallback static font because the fallback font will understand the values and map to whatever is the closest available value for the static font.
+The W3C has undertaken to map Registered variation axis to standard CSS properties, so we use them to set different variation axes.
 
 - Weight axis -----> `font-weight`
 - Width axis -----> `font-stretch`
@@ -71,27 +69,87 @@ body {
 }
 ```
 
-
 ## Registered Variation Axis
 
-- **Weight**: Describes how light or bold the letterforms can be. Its value range is 1–1000, but typeface designers typically restrict it to a smaller range of 100–900. It is represented by the `wght` tag.
+### Weight
 
-We can use keywords like **normal** for (400) and **bold** (700) with variable fonts like we do with static fonts, but for custom weights like 375, we need to use numbers instead of keywords as we can't map these keywords to custom weights.
+Describes how light or bold the letterforms can be. Its value range is 1–1000, but typeface designers typically restrict it to a smaller range of 100–900.
+
+It is represented by the **wght** tag.
+
+Though, we can use keywords like normal for 400 and bold for 700 with variable fonts like we do with static fonts, but for custom weights like 375, we need to use numbers instead of keywords as we can't map these keywords to custom weights.
 
 ```css
 font-weight: 375;
+/* Or */
 font-variation-settings: 'wght' 375;
 ```
 
-- **Width**: Describes how narrow or wide or condensed or extended the letterforms can be. It takes any value from 0 and up and the normal/default value is 100(100%).
+### Width
 
-- **Italic**
+Describes how narrow or wide or condensed or extended the letterforms can be. It takes any value from 0 to up and the normal/default value is 100(100%).
 
-- **Slant**
+It is represented by the **wdth** tag.
 
-- **Optical size**
+This variation axis doesn't merely stretches the typeface in case of variable fonts _(for static fonts, it just stretches the font)_, it actually changes the typeface to take up more or less space along the width axis. It varies the display by either condensing or extending it.
+
+If a value is outside the range encoded in the font, the browser should render the font at the closest value allowed.
+
+```css
+font-stretch: 115%;
+/* Or */
+font-variation-settings: 'wdth' 115;
+```
+
+### Slant
+
+Changes the angle or obliqueness of the letterform according to the value provided. The similar effect we get when we set `font-style` to obqliue. It's not italicizing the font but slanting it to create different visual presentation.
+
+It is represented by the **slnt** tag.
+
+The normal or upright slant value is 0 (0 degress) with allowed values ranging from -90 degress to +90 degress.
+
+```css
+font-style: oblique 6deg;
+/* Or */
+font-variation-settings: "slnt" -10;
+```
+
+### Italic
+
+In contrast with Slant which sets the angle of typeface, Italic typically provides a different design for the typeface. Italicized fonts often provide different designs for letters like A, B, F etc. so we may see substitutions of some characters.
+
+It can be set in the range of 0-1, where 0 specifies not-italic, 0.5 specifies halfway-italic and 1 specifies fully-italic.
+
+It is represented by the **ital** tag.
+
+> In CSS, both italic and oblique are applied to text using the font-style property. Also note the introduction of font-synthesis: none; — which will prevent browsers from accidentally applying the variation axis and a synthesized italic. This can be used to prevent faux-bolding as well.
+> — _MDN Web Docs_
+
+```css
+font-style: italic;
+/* Or */
+font-variation-settings: "ital" 0;
+font-synthesis: none;
+```
+
+### Optical Size
+
+Relates to the actual size of the font
 
 
+## Custom Variation Axis
+
+
+### Grade
+
+
+Grade may become one of the more common custom axes as it has a known history in typeface design. The practice of designing different grades of a typeface was often done in reaction to intended use and printing technique. The term 'grade' refers to the relative weight or density of the typeface design, but differs from traditional 'weight' in that the physical space the text occupies does not change, so changing the text grade doesn't change the overall layout of the text or elements around it. This makes grade a useful axis of variation as it can be varied or animated without causing a reflow of the text itself.
+
+
+```css
+font-variation-settings: "GRAD" 50;
+```
 
 
 
@@ -145,6 +203,14 @@ em {
   font-stretch: 125%;
 }
 ```
+
+If a variable font includes both Roman and italic variations in a single file, the value of `font-style` inside the @font-face block should be:
+
+```css
+font-style: normal italic;
+```
+
+Otherwise, the browser won’t use the real italic design from the font file (even it's present). It will just tilt the regular style instead.
 
 ## Providing font fallback support
 
