@@ -143,7 +143,10 @@ It is represented by the **opsz** tag.
 
 Normally optical sizing is handled automatically by the browser but with some variable fonts, we can override automatic behaviour in two ways:
 
-1. We can toggle this automatic behaviour on and off by using the new `font-optical-sizing` and setting it to either **auto** which is a default behaviour or **none** which turns the default behaviour off.
+1. We can toggle this automatic behaviour on and off by using the new `font-optical-sizing` and setting it to either **auto** which is a default behaviour or **none** which turns the default behaviour off which will make all font sizes use the font’s default design.
+
+
+
 
 2. We can provide custom value for optical size using `font-variation-settings` property and setting the optical sizing, 'opsz' to whatever number want. The lower the number, the smaller the font is perceived to be so thicker the font strokes get.
 
