@@ -60,7 +60,7 @@ There is also another lower-level syntax.
 > The lower-level syntax (`font-variation-settings`) was the first mechanism implemented to test the early implementations of variable font support and is necessary to utilize new or custom axes beyond the five registered ones. However, the W3C's intent was for this syntax not to be used when other attributes are available. Therefore wherever possible, the appropriate property should be used, with the lower-level syntax of `font-variation-settings` only being used to set values or axes not available otherwise.  
 > — _MDN Web Docs_
 
-When using `font-variation-settings` it is important to note that axis names are case-sensitive (lowercase for registered uppercase for tags of custom variation axes). This property takes comma-separated value pairs where each axis is referenced using a 4-letter tag in quotes, and the corresponding value is provided as an integer with no units. With this property, we can set values for all the available variation axes in single line.
+When using `font-variation-settings` it is important to note that axis names are case-sensitive (lowercase for registered and uppercase for tags of custom variation axes). This property takes comma-separated value pairs where each axis is referenced using a 4-letter tag in quotes (single or double), and the corresponding value is provided as an integer with no units. With this property, we can set values for all the available variation axes in single line.
 
 ```css
 body {
@@ -107,17 +107,17 @@ Changes the angle or obliqueness of the letterform according to the value provid
 
 It is represented by the **slnt** tag.
 
-The normal or upright slant value is 0 (0 degress) with allowed values ranging from -90 degress to +90 degress.
+The normal or upright slant value is typically 0 (0 degress) with allowed values ranging from -90 degress to +90 degress.
 
 ```css
 font-style: oblique 6deg;
 /* Or */
-font-variation-settings: "slnt" -10;
+font-variation-settings: 'slnt' -10;
 ```
 
 ### Italic
 
-In contrast with Slant which sets the angle of typeface, Italic typically provides a different design for the typeface. Italicized fonts often provide different designs for letters like A, B, F etc. so we may see substitutions of some characters.
+In contrast with Slant which sets the angle of typeface, Italic design typically provides a different design for letterforms like A, G, F etc. so we may see substitutions of some characters when transitioning from upright to italic
 
 It can be set in the range of 0-1, where 0 specifies not-italic, 0.5 specifies halfway-italic and 1 specifies fully-italic.
 
@@ -129,31 +129,46 @@ It is represented by the **ital** tag.
 ```css
 font-style: italic;
 /* Or */
-font-variation-settings: "ital" 0;
+font-variation-settings: 'ital' 0;
 font-synthesis: none;
 ```
 
 ### Optical Size
 
-Relates to the actual size of the font
+Refers to how the font looks at different sizes to make it easier to read. It is done by varying the overall stroke thickness of letterforms based on physical size. If the font size is very small (like 10 or 12px), the characters would have an overall thicker stroke, and perhaps other small modifications to ensure that it would reproduce and be readable at a physically smaller size. Conversely, when a much larger size was being used (like 48 or 60px), there might be much greater variation in thick and thin stroke weights, showing the typeface design more in line with the original intent.
+
+Optical size ensures that text is clear and readable, whether it's tiny or very large.
+
+It is represented by the **opsz** tag.
+
+Normally optical sizing is handled automatically by the browser but with some variable fonts, we can override automatic behaviour in two ways:
+
+1. We can toggle this automatic behaviour on and off by using the new `font-optical-sizing` and setting it to either **auto** which is a default behaviour or **none** which turns the default behaviour off.
+
+2. We can provide custom value for optical size using `font-variation-settings` property and setting the optical sizing, 'opsz' to whatever number want. The lower the number, the smaller the font is perceived to be so thicker the font strokes get.
+
+```css
+font-optical-sizing: auto;
+/* Or */
+font-optical-sizing: none;
+/* Or */
+font-variation-settings: "opsz" 36;
+```
+
+> However when using font-variation-settings: 'opsz' <num>, you can supply a numeric value. In most cases you would want to match the font-size (the physical size the type is being rendered) with the opsz value (which is how optical sizing is intended to be applied when using auto). The option to provide a specific value is provided so that should it be necessary to override the default — for legibility, aesthetic, or some other reason — a specific value can be applied. _MDN Web Docs_
 
 
 ## Custom Variation Axis
 
-
 ### Grade
 
+> The term 'grade' refers to the relative weight or density of the typeface design, but differs from traditional 'weight' in that the physical space the text occupies does not change, so changing the text grade doesn't change the overall layout of the text or elements around it. This makes grade a useful axis of variation as it can be varied or animated without causing a reflow of the text itself. — _MDN Web Docs_
 
-Grade may become one of the more common custom axes as it has a known history in typeface design. The practice of designing different grades of a typeface was often done in reaction to intended use and printing technique. The term 'grade' refers to the relative weight or density of the typeface design, but differs from traditional 'weight' in that the physical space the text occupies does not change, so changing the text grade doesn't change the overall layout of the text or elements around it. This makes grade a useful axis of variation as it can be varied or animated without causing a reflow of the text itself.
-
+It is represented by the **GRAD** tag.
 
 ```css
-font-variation-settings: "GRAD" 50;
+font-variation-settings: 'GRAD' 50;
 ```
-
-
-
-
 
 ## Adding and Using Variable Fonts
 
@@ -214,7 +229,7 @@ Otherwise, the browser won’t use the real italic design from the font file (ev
 
 ## Providing font fallback support
 
-Even though the support for variable fonts is pretty good in all modern browsers however, it is necessary to provide a proper font fallback support for the older browsers. MDN documentation on variable fonts recommends using `@support` query to test browser support for variable fonts. Using this approach, we first declare styles for older browsers and then using @support query to test for the availability of variable fonts feature.
+Even though the support for variable fonts is pretty good in all modern browsers however, it is necessary to provide a proper font fallback support for the older browsers. MDN documentation on variable fonts recommends using `@support` query _(feature query block)_ to test browser support for variable fonts. Using this approach, we first declare styles for older browsers and then using @support for modern browsers.
 
 ```css
 h1 {
@@ -227,23 +242,8 @@ h1 {
 }
 ```
 
-If browser supports variable fonts, it will run the code inside `@support` query. This way we first write styles for all older browsers and builds on top of it using `@support`.
+We first write styles for all older browsers and builds on top of it using `@support` as if browser supports variable fonts, it will run the code inside `@support` query. 
 
-However, this is quite lot of work where we are literally writing two sets of styles, one for older browsers, one for modern browsers. The second solution is bit sneaky where it takes the advantage of similarities in browser support for variable fonts and CSS custom properties / CSS variables. The browser support for both of them is pretty much same means the browser which supports CSS properties supports variable fonts as well and vice versa.
-
-So, using this approach, we first create CSS variable and it's value is the name of variable font. Then inside the body tag, we declare `font-family` property twice. The first declaration here works as the fallback where we can have any font we want to provide as fallback and second declaration is where we specify variable font. The browser without support for custom properties will simply ignore the second declaration but if it supports, the second declaration will override first declaration and we get to use variable fonts. Without writing lot of extra code and any queries, this is lot cleaner way to do it but it requires thorough testing on different devices so make sure it works properly.
-
-```css
-:root {
-  --font-family: Amstelvar;
-}
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  font-family: var(--font-family);
-}
-```
-
-This approach can also be used with `font-variation-settings` as well. We can declare `font-weight`, `font-width` and `font-style` properties higher up in hierarchy and then provide `font-variation-settings` at the end of rule and that way the standard weight, width, style properties will be applied first and if browser supports `font-variation-settings` property, it will overwrite them.
 
 ## File Size of Variable Fonts
 
